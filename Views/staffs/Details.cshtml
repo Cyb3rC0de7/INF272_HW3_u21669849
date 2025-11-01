@@ -1,0 +1,94 @@
+﻿@model u21669849_HW3.Models.staffs
+
+@{
+    ViewBag.Title = "Staff Details";
+}
+
+<h2>Staff Details</h2>
+
+<div>
+    <h4>staffs</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.staff_id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.staff_id)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.first_name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.first_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.last_name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.last_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.phone)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.active)
+        </dt>
+        <dd>
+            @(Model.active == 1 ? "Yes" : "No")
+        </dd>
+
+        <dt>
+            Store
+        </dt>
+        <dd>
+            @if (Model.stores != null)
+            {
+                @Html.DisplayFor(model => model.stores.store_name)
+            }
+            else
+            {
+                <text>No Store Assigned</text>
+            }
+        </dd>
+
+        <dt>
+            Manager
+        </dt>
+        <dd>
+            @if (Model.manager_id.HasValue)
+            {
+                if (Model.staffs2 != null)
+                {
+                    @Html.DisplayFor(model => model.staffs2.first_name) <text> </text> @Html.DisplayFor(model => model.staffs2.last_name)
+                }
+                else
+                {
+                    <text>Manager ID: @Model.manager_id</text>
+                }
+            }
+            else
+            {
+                <text>No Manager</text>
+            }
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.staff_id }, new { @class = "btn btn-warning" }) |
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+</p>

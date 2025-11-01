@@ -1,0 +1,334 @@
+﻿@model u21669849_HW3.Models.BikeStoreCombined
+
+<main>
+    <div class="container-fluid">
+        <!-- STAFF SECTION -->
+        <div class="row mainSection">
+            <div class="row componentHeadings">
+                <div class="col">
+                    <h3>Staff Management</h3>
+                </div>
+            </div>
+
+            <div class="row componentList">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Staff ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Active</th>
+                            <th>Store</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var staff in Model.Staff)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => staff.staff_id)</td>
+                                <td>@Html.DisplayFor(modelItem => staff.first_name)</td>
+                                <td>@Html.DisplayFor(modelItem => staff.last_name)</td>
+                                <td>@Html.DisplayFor(modelItem => staff.email)</td>
+                                <td>@Html.DisplayFor(modelItem => staff.phone)</td>
+                                <td>@(staff.active == 1 ? "Yes" : "No")</td>
+                                <td>@Html.DisplayFor(modelItem => staff.stores.store_name)</td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", "staffs", new { id = staff.staff_id }, new { @class = "btn btn-warning btn-sm openModal" })
+                                    @Html.ActionLink("Delete", "Delete", "staffs", new { id = staff.staff_id }, new { @class = "btn btn-danger btn-sm openModal" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row componentPaging">
+                <div class="pagination">
+                    @if (ViewBag.StaffCurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = 1, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">First</a>
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage - 1, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">Previous</a>
+                    }
+
+                    @{
+                        int StaffMaxVisiblePages = 5;
+                        int StaffStartPage = Math.Max(1, ViewBag.StaffCurrentPage - StaffMaxVisiblePages / 2);
+                        int StaffEndPage = Math.Min(ViewBag.StaffTotalPages, StaffStartPage + StaffMaxVisiblePages - 1);
+
+                        if ((StaffEndPage - StaffStartPage) < (StaffMaxVisiblePages - 1))
+                        {
+                            StaffStartPage = Math.Max(1, StaffEndPage - StaffMaxVisiblePages + 1);
+                        }
+                    }
+
+                    @for (int i = StaffStartPage; i <= StaffEndPage; i++)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = i, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })"
+                           class="pagination-link @(i == ViewBag.StaffCurrentPage ? "active" : "")">@i</a>
+                    }
+
+                    @if (ViewBag.StaffCurrentPage < ViewBag.StaffTotalPages)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage + 1, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">Next</a>
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffTotalPages, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">Last</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- CUSTOMERS SECTION -->
+        <div class="row mainSection">
+            <div class="row componentHeadings">
+                <div class="col">
+                    <h3>Customer Management</h3>
+                </div>
+            </div>
+
+            <div class="row componentList">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Street</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Zip Code</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var customer in Model.Customers)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => customer.customer_id)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.first_name)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.last_name)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.phone)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.email)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.street)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.city)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.state)</td>
+                                <td>@Html.DisplayFor(modelItem => customer.zip_code)</td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", "customers", new { id = customer.customer_id }, new { @class = "btn btn-warning btn-sm openModal" })
+                                    @Html.ActionLink("Delete", "Delete", "customers", new { id = customer.customer_id }, new { @class = "btn btn-danger btn-sm openModal" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row componentPaging">
+                <div class="pagination">
+                    @if (ViewBag.CustomerCurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = 1, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">First</a>
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage - 1, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">Previous</a>
+                    }
+
+                    @{
+                        int CustomerMaxVisiblePages = 5;
+                        int CustomerStartPage = Math.Max(1, ViewBag.CustomerCurrentPage - CustomerMaxVisiblePages / 2);
+                        int CustomerEndPage = Math.Min(ViewBag.CustomerTotalPages, CustomerStartPage + CustomerMaxVisiblePages - 1);
+
+                        if ((CustomerEndPage - CustomerStartPage) < (CustomerMaxVisiblePages - 1))
+                        {
+                            CustomerStartPage = Math.Max(1, CustomerEndPage - CustomerMaxVisiblePages + 1);
+                        }
+                    }
+
+                    @for (int i = CustomerStartPage; i <= CustomerEndPage; i++)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = i, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })"
+                           class="pagination-link @(i == ViewBag.CustomerCurrentPage ? "active" : "")">@i</a>
+                    }
+
+                    @if (ViewBag.CustomerCurrentPage < ViewBag.CustomerTotalPages)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage + 1, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">Next</a>
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerTotalPages, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage, productPageSize = ViewBag.ProductPageSize })">Last</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- PRODUCTS SECTION -->
+        <div class="row mainSection">
+            <div class="row componentHeadings">
+                <div class="col">
+                    <h3>Product Management (Bicycles)</h3>
+                </div>
+            </div>
+
+            <div class="row componentList">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Model Year</th>
+                            <th>List Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Products)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => product.product_id)</td>
+                                <td>@Html.DisplayFor(modelItem => product.product_name)</td>
+                                <td>@Html.DisplayFor(modelItem => product.brands.brand_name)</td>
+                                <td>@Html.DisplayFor(modelItem => product.categories.category_name)</td>
+                                <td>@Html.DisplayFor(modelItem => product.model_year)</td>
+                                <td>$@Html.DisplayFor(modelItem => product.list_price)</td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", "products", new { id = product.product_id }, new { @class = "btn btn-warning btn-sm openModal" })
+                                    @Html.ActionLink("Delete", "Delete", "products", new { id = product.product_id }, new { @class = "btn btn-danger btn-sm openModal" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row componentPaging">
+                <div class="pagination">
+                    @if (ViewBag.ProductCurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = 1, productPageSize = ViewBag.ProductPageSize })">First</a>
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage - 1, productPageSize = ViewBag.ProductPageSize })">Previous</a>
+                    }
+
+                    @{
+                        int ProductMaxVisiblePages = 5;
+                        int ProductStartPage = Math.Max(1, ViewBag.ProductCurrentPage - ProductMaxVisiblePages / 2);
+                        int ProductEndPage = Math.Min(ViewBag.ProductTotalPages, ProductStartPage + ProductMaxVisiblePages - 1);
+
+                        if ((ProductEndPage - ProductStartPage) < (ProductMaxVisiblePages - 1))
+                        {
+                            ProductStartPage = Math.Max(1, ProductEndPage - ProductMaxVisiblePages + 1);
+                        }
+                    }
+
+                    @for (int i = ProductStartPage; i <= ProductEndPage; i++)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = i, productPageSize = ViewBag.ProductPageSize })"
+                           class="pagination-link @(i == ViewBag.ProductCurrentPage ? "active" : "")">@i</a>
+                    }
+
+                    @if (ViewBag.ProductCurrentPage < ViewBag.ProductTotalPages)
+                    {
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductCurrentPage + 1, productPageSize = ViewBag.ProductPageSize })">Next</a>
+                        <a href="@Url.Action("Maintain", new { staffPage = ViewBag.StaffCurrentPage, staffPageSize = ViewBag.StaffPageSize, customerPage = ViewBag.CustomerCurrentPage, customerPageSize = ViewBag.CustomerPageSize, productPage = ViewBag.ProductTotalPages, productPageSize = ViewBag.ProductPageSize })">Last</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .mainSection {
+        padding: 20px 0;
+    }
+
+    .componentHeadings {
+        margin-bottom: 15px;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    tr:hover {
+        background-color: #f1f3f5;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+        .pagination a {
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+            .pagination a.active {
+                background-color: #007bff;
+                color: white;
+            }
+
+            .pagination a:hover:not(.active) {
+                background-color: #ddd;
+            }
+
+    .my-4 {
+        margin: 2rem 0;
+        border: 0;
+        border-top: 2px solid #dee2e6;
+    }
+
+    .btn-sm {
+        margin-right: 5px;
+    }
+</style>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Modal Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).on('click', '.openModal', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+
+        var linkText = $(this).text().trim();
+        $('#myModalLabel').text(linkText + ' - Loading...');
+        $('#myModal .modal-body').load(url, function () {
+            $('#myModalLabel').text(linkText);
+            $('#myModal').modal('show');
+        });
+    });
+</script>

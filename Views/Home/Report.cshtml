@@ -1,0 +1,358 @@
+﻿@model u21669849_HW3.Models.BikeStoreCombined
+@using Newtonsoft.Json
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+</head>
+
+<main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">BikeStore Sales Report</h2>
+            </div>
+        </div>
+
+        <!-- REPORT CHART SECTION -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Popular Products Report</h4>
+                        <p class="mb-0">Products ordered most frequently by customers</p>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="popularProductsChart" width="400" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORT DATA TABLE -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Product Sales Data</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Product Name</th>
+                                    <th>Times Ordered</th>
+                                    <th>Total Quantity Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ViewBag.PopularProducts)
+                                {
+                                    <tr>
+                                        <td>@item.ProductId</td>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.OrderCount</td>
+                                        <td>@item.TotalQuantity</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAVE REPORT SECTION -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Save Report</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row align-items-end">
+                            <div class="form-group col-md-5">
+                                <label for="filename">Filename</label>
+                                <input type="text" id="filename" class="form-control" placeholder="Enter filename" />
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="fileType">File Type</label>
+                                <select id="fileType" class="form-control">
+                                    <option value="pdf">PDF</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button onclick="saveReport()" class="btn btn-primary btn-block">Save Report</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DOCUMENT ARCHIVE SECTION -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Document Archive</h4>
+                        <p class="mb-0">Saved reports and documents</p>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.ReportFiles.Count > 0)
+                        {
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Filename</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var file in ViewBag.ReportFiles)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <i class="fas fa-file"></i> @file
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("DownloadReport", "Home", new { filename = file })"
+                                                   class="btn btn-info btn-sm" target="_blank">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                                <form action="@Url.Action("DeleteReport", "Home")" method="post"
+                                                      style="display:inline-block;"
+                                                      onsubmit="return confirm('Are you sure you want to delete this report?');">
+                                                    <input type="hidden" name="filename" value="@file" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle"></i> No reports saved yet. Generate and save a report to see it here.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BONUS: RICH TEXT DESCRIPTION SECTION
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Report Description (Bonus Feature)</h4>
+                </div>
+                <div class="card-body">
+                    <textarea id="reportDescription" class="form-control" rows="5"
+                              placeholder="Add a description for your report..."></textarea>
+                    <small class="form-text text-muted">
+                        Note: This feature allows you to add rich descriptions to saved reports.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    </div>
+</main>
+
+<style>
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        background-color: #007bff;
+        color: white;
+        border-bottom: 1px solid #dee2e6;
+        padding: 15px;
+    }
+
+        .card-header h4 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .card-header p {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    .btn-sm {
+        margin-right: 5px;
+    }
+
+    .alert {
+        margin-bottom: 0;
+    }
+</style>
+
+<script>
+    // Prepare data for chart
+    const popularProducts = @Html.Raw(JsonConvert.SerializeObject(ViewBag.PopularProducts));
+
+    const productNames = popularProducts.map(p => p.ProductName);
+    const orderCounts = popularProducts.map(p => p.OrderCount);
+    const totalQuantities = popularProducts.map(p => p.TotalQuantity);
+
+    // Create chart
+    const ctx = document.getElementById('popularProductsChart').getContext('2d');
+    const popularProductsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: productNames,
+            datasets: [
+                {
+                    label: 'Times Ordered',
+                    data: orderCounts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Total Quantity Sold',
+                    data: totalQuantities,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Product Popularity Analysis',
+                    font: {
+                        size: 16
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+
+    // Save report
+    async function saveReport() {
+        const filename = document.getElementById("filename").value || "bikestore_report";
+        const fileType = document.getElementById("fileType").value;
+
+        if (fileType === "pdf") {
+            // Generate PDF with chart image
+            const chartDataUrl = document.getElementById("popularProductsChart").toDataURL("image/png");
+
+            // Prepare table data for PDF
+            const tableData = popularProducts.map(p => [
+                p.ProductId.toString(),
+                p.ProductName,
+                p.OrderCount.toString(),
+                p.TotalQuantity.toString()
+            ]);
+
+            const pdfDoc = {
+                content: [
+                    { text: 'BikeStore Sales Report', style: 'header' },
+                    { text: 'Popular Products Analysis', style: 'subheader' },
+                    { text: '\n' },
+                    { image: chartDataUrl, width: 500 },
+                    { text: '\n\n' },
+                    { text: 'Detailed Product Sales Data', style: 'subheader' },
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['auto', '*', 'auto', 'auto'],
+                            body: [
+                                ['Product ID', 'Product Name', 'Times Ordered', 'Total Quantity'],
+                                ...tableData
+                            ]
+                        }
+                    }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 18,
+                        bold: true,
+                        margin: [0, 0, 0, 10]
+                    },
+                    subheader: {
+                        fontSize: 14,
+                        bold: true,
+                        margin: [0, 10, 0, 5]
+                    }
+                }
+            };
+
+            pdfMake.createPdf(pdfDoc).getBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append("file", blob, filename + ".pdf");
+
+                await fetch("@Url.Action("SaveReport", "Home")", {
+                    method: "POST",
+                    body: formData
+                });
+
+                alert("Report saved successfully!");
+                location.reload();
+            });
+        } else if (fileType === "csv") {
+            // Generate CSV
+            let csvContent = "Product ID,Product Name,Times Ordered,Total Quantity Sold\n"
+                + popularProducts.map(p =>
+                    `${p.ProductId},"${p.ProductName}",${p.OrderCount},${p.TotalQuantity}`
+                ).join("\n");
+
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const formData = new FormData();
+            formData.append("file", blob, filename + ".csv");
+
+            await fetch("@Url.Action("SaveReport", "Home")", {
+                method: "POST",
+                body: formData
+            });
+
+            alert("Report saved successfully!");
+            location.reload();
+        }
+    }
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

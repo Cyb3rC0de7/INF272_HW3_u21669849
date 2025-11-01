@@ -1,40 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using u21669849_HW3.Models;
 
 namespace u21669849_HW3.Controllers
 {
-    public class ProductsController : Controller
+    public class productsController : Controller
     {
         private BikeStoresEntities db = new BikeStoresEntities();
 
-        // GET: Products
+        // GET: products
         public async Task<ActionResult> Index()
         {
             var products = db.products.Include(p => p.brands).Include(p => p.categories);
             return View(await products.ToListAsync());
         }
 
-        // GET: Products/Details/5
+        // GET: products/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            products product = await db.products.FindAsync(id);
-            if (product == null)
+            products products = await db.products.FindAsync(id);
+            if (products == null)
             {
                 return HttpNotFound();
             }
-            return View(product);
+            return View(products);
         }
 
-        // GET: Products/Create
+        // GET: products/Create
         public ActionResult Create()
         {
             ViewBag.brand_id = new SelectList(db.brands, "brand_id", "brand_name");
@@ -42,78 +45,78 @@ namespace u21669849_HW3.Controllers
             return View();
         }
 
-        // POST: Products/Create
+        // POST: products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "product_id,product_name,brand_id,category_id,model_year,list_price")] products product)
+        public async Task<ActionResult> Create([Bind(Include = "product_id,product_name,brand_id,category_id,model_year,list_price")] products products)
         {
             if (ModelState.IsValid)
             {
-                db.products.Add(product);
+                db.products.Add(products);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.brand_id = new SelectList(db.brands, "brand_id", "brand_name", product.brand_id);
-            ViewBag.category_id = new SelectList(db.categories, "category_id", "category_name", product.category_id);
-            return View(product);
+            ViewBag.brand_id = new SelectList(db.brands, "brand_id", "brand_name", products.brand_id);
+            ViewBag.category_id = new SelectList(db.categories, "category_id", "category_name", products.category_id);
+            return View(products);
         }
 
-        // GET: Products/Edit/5
+        // GET: products/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            products product = await db.products.FindAsync(id);
-            if (product == null)
+            products products = await db.products.FindAsync(id);
+            if (products == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.brand_id = new SelectList(db.brands, "brand_id", "brand_name", product.brand_id);
-            ViewBag.category_id = new SelectList(db.categories, "category_id", "category_name", product.category_id);
-            return View(product);
+            ViewBag.brand_id = new SelectList(db.brands, "brand_id", "brand_name", products.brand_id);
+            ViewBag.category_id = new SelectList(db.categories, "category_id", "category_name", products.category_id);
+            return View(products);
         }
 
-        // POST: Products/Edit/5
+        // POST: products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "product_id,product_name,brand_id,category_id,model_year,list_price")] products product)
+        public async Task<ActionResult> Edit([Bind(Include = "product_id,product_name,brand_id,category_id,model_year,list_price")] products products)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
+                db.Entry(products).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.brand_id = new SelectList(db.brands, "brand_id", "brand_name", product.brand_id);
-            ViewBag.category_id = new SelectList(db.categories, "category_id", "category_name", product.category_id);
-            return View(product);
+            ViewBag.brand_id = new SelectList(db.brands, "brand_id", "brand_name", products.brand_id);
+            ViewBag.category_id = new SelectList(db.categories, "category_id", "category_name", products.category_id);
+            return View(products);
         }
 
-        // GET: Products/Delete/5
+        // GET: products/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            products product = await db.products.FindAsync(id);
-            if (product == null)
+            products products = await db.products.FindAsync(id);
+            if (products == null)
             {
                 return HttpNotFound();
             }
-            return View(product);
+            return View(products);
         }
 
-        // POST: Products/Delete/5
+        // POST: products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            products product = await db.products.FindAsync(id);
-            db.products.Remove(product);
+            products products = await db.products.FindAsync(id);
+            db.products.Remove(products);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
