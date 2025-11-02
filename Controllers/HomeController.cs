@@ -22,7 +22,7 @@ namespace u21669849_HW3.Controllers
             int productPage = 1, int productPageSize = 10,
             int? brandFilter = null, int? categoryFilter = null)
         {
-            // Filter products by brand and category if specified
+            // Filter products by brand and category
             var productsQuery = db.products
                 .Include(p => p.brands)
                 .Include(p => p.categories)
@@ -163,7 +163,7 @@ namespace u21669849_HW3.Controllers
 
             ViewBag.PopularProducts = popularProducts;
 
-            // Document Archive
+            // Archive
             var reportDirectory = Server.MapPath("~/Reports");
             if (!Directory.Exists(reportDirectory))
             {
